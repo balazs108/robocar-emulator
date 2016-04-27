@@ -336,23 +336,57 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
   unsigned int f {0u};
   unsigned int t {0u};
   unsigned int s {0u};
-
+  unsigned int elozog;
+  unsigned int ujpar[5];
+  unsigned int idozito=0;
+  bool kapcsolo=false; 
   std::vector<Gangster> gngstrs;
 
   for ( ;; )
     {
       std::this_thread::sleep_for ( std::chrono::milliseconds ( 200 ) );
+      idozito +=200;
+      if(idozito==30000)
+      	{kapcsolo=!kapcsolo; idozito=0;}
 
-      for ( auto cop:cops )
+      for (int i=0;i<10;i++)
         {
-          car ( socket, cop, &f, &t, &s );
-
-          gngstrs = gangsters ( socket, cop, t );
-
-          if ( gngstrs.size() > 0 )
-            g = gngstrs[0].to;
+          car ( socket, cops[i], &f, &t, &s );
+          if(!kapcsolo){
+          	if(i%2==0){
+          		gngstrs = gangsters ( socket, cops[i], t );
+          		if ( gngstrs.size() > 0 )
+            		{
+            			g = gngstrs[0].to;
+          	 			elozog=g;
+ 	         		}
+    	      	else
+        	    	{
+            			g = 0;
+          				elozog=g;
+          			}
+          		}
+          	else g=elozog;
+          }
           else
-            g = 0;
+          {
+          	if(i<5)
+          	{
+          		gngstrs=gangsters (socket, cops[i],t);
+          			if(gngstrs.size() >0)
+          			{
+          				g=gngstrs[0].to;
+          				ujpar[i]=g;
+          			}
+          			else
+          			{
+          				g=0;
+          				ujpar[i]=0;
+          			}
+          	}
+          	else
+          		g=ujpar[i%5];
+          } 
 
           if ( g > 0 )
             {
@@ -365,7 +399,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
                   std::copy ( path.begin(), path.end(),
                               std::ostream_iterator<osmium::unsigned_object_id_type> ( std::cout, " -> " ) );
 
-                  route ( socket, cop, path );
+                  route ( socket, cops[i], path );
                 }
             }
         }
