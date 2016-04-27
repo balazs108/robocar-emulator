@@ -88,7 +88,7 @@ std::vector<justine::sampleclient::MyShmClient::Cop> justine::sampleclient::MySh
 
   boost::system::error_code err;
 
-  size_t length = std::sprintf ( data, "<init guided %s 10 c>", m_teamname.c_str() );
+  size_t length = std::sprintf ( data, "<init guided %s 4 c>", m_teamname.c_str() );
 
   socket.send ( boost::asio::buffer ( data, length ) );
 
@@ -339,6 +339,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
   unsigned int elozog;
   unsigned int ujpar[5];
   unsigned int idozito=0;
+  const int felperc=30000;
   bool kapcsolo=false; 
   std::vector<Gangster> gngstrs;
 
@@ -346,11 +347,13 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
     {
       std::this_thread::sleep_for ( std::chrono::milliseconds ( 200 ) );
       idozito +=200;
-      if(idozito==30000)
+      if(idozito==felperc)
       	{kapcsolo=!kapcsolo; idozito=0;}
 
-      for (int i=0;i<10;i++)
+
+      for (std::vector<Cop>::iterator m=cops.begin() ; m!=cops.end() ; m++)
         {
+          int i=std::distance(cops.begin(),m);
           car ( socket, cops[i], &f, &t, &s );
           if(!kapcsolo){
           	if(i%2==0){
@@ -359,7 +362,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
             		{
             			g = gngstrs[0].to;
           	 			elozog=g;
- 	         		}
+ 	         		  }
     	      	else
         	    	{
             			g = 0;
@@ -370,7 +373,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
           }
           else
           {
-          	if(i<5)
+          	if(i<(i/2))
           	{
           		gngstrs=gangsters (socket, cops[i],t);
           			if(gngstrs.size() >0)
@@ -385,7 +388,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
           			}
           	}
           	else
-          		g=ujpar[i%5];
+          		g=ujpar[i%(i/2)];
           } 
 
           if ( g > 0 )
