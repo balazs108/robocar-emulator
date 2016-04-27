@@ -373,7 +373,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
           }
           else
           {
-          	if(i<(i/2))
+          	if(i<(cops.size()/2))
           	{
           		gngstrs=gangsters (socket, cops[i],t);
           			if(gngstrs.size() >0)
@@ -388,7 +388,7 @@ void justine::sampleclient::MyShmClient::start10 ( boost::asio::io_service& io_s
           			}
           	}
           	else
-          		g=ujpar[i%(i/2)];
+          		g=ujpar[i%(cops.size()/2)];
           } 
 
           if ( g > 0 )
